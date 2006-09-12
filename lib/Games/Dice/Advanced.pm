@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use vars qw($VERSION);
 
-$VERSION = '1.0';
+$VERSION = '1.1';
 
 =head1 NAME
 
@@ -44,6 +44,8 @@ When called as a class method, it takes a list of arguments defining a
 together to produce a result.  Each item in the recipe must be a valid
 argument to the constructor (see the description of the 'new' method below).
 If no argument is given to a class method, we assume a six-sided die - 'd6'.
+You will note that the multiplier constructor is not available when roll
+is called in this way.
 
 When called as an object method, no arguments are permitted.
 
@@ -102,6 +104,8 @@ and multiplies the results by N when it is rolled.  Compare with NdM above.
 Leading and trailing whitespace is stripped, no other whitespace is allowed
 in any of the above.
 
+=over 4
+
 =item SUBREF
 
 A reference to a subroutine, which is to be called whenever we need to generate
@@ -111,6 +115,8 @@ a result.  It should take no parameters.
 
 Use this to easily specify truly weird dice.  NOT YET IMPLEMENTED, so use
 a SUBREF for the moment.
+
+=back
 
 =cut
 
@@ -132,7 +138,7 @@ sub new {
 	    if($recipe !~ /\D/) {                       # constant
 	        # $self = eval("sub { $recipe * $mul }");
 	        $self = sub { $recipe * $mul };
-	    } elsif($recipe =~ /^d(\d)+$/) {            # dINT
+	    } elsif($recipe =~ /^d(\d+)$/) {            # dINT
             # $self = eval("sub { (1 + int(rand($1))) * $mul }");
             my $faces = $1;
             $self = sub { (1 + int(rand($faces))) * $mul };
@@ -168,7 +174,9 @@ sub foldl {
 =head1 BUGS
 
 For random, read 'pseudo-random'.  Patches to work with sources of true
-randomness are welcome ;-)
+randomness are welcome.
+
+Doesn't support dice with fractional or complex numbers of sides :-)
 
 =head1 FEEDBACK
 
@@ -190,4 +198,5 @@ This module is free-as-in-speech software, and may be used, distributed,
 and modified under the same terms as Perl itself.
 
 =cut
+
 1;
